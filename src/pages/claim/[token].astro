@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ClaimStatus from "../../components/ClaimStatus.astro";
+
+const { token } = Astro.params;
+---
+
+<BaseLayout title="Check Your Coupon">
+  <main class="p-6 text-center">
+    <h1 class="text-2xl font-bold mb-4">Checking your coupon...</h1>
+    <ClaimStatus client:load token={token} />
+  </main>
+</BaseLayout>

@@ -1,0 +1,37 @@
+---
+const { token } = Astro.props;
+---
+
+<div id="claim-status" class="text-gray-600">Verifying token...</div>
+
+<script type="module">
+  const el = document.getElementById("claim-status");
+
+  const render = (html) => {
+    if (el) el.innerHTML = html;
+  };
+
+  fetch(`/api/claim/${token}`)
+    .then((res) => res.json())
+    .then((data) => {
+      switch (data.status) {
+        case "valid":
+          render(`<p class="text-green-600 font-semibold">🎉 Coupon valid for campaign: ${data.campaign}</p>`);
+          break;
+        case "expired":
+          render(`<p class="text-yellow-600">⏰ This coupon has expired.</p>`);
+          break;
+        case "redeemed":
+          render(`<p class="text-red-600">❌ This coupon has already been redeemed.</p>`);
+          break;
+        case "invalid":
+          render(`<p class="text-gray-600">Invalid coupon token.</p>`);
+          break;
+        default:
+          render(`<p class="text-gray-600">An unknown error occurred.</p>`);
+      }
+    })
+    .catch(() => {
+      render(`<p class="text-gray-600">Network error. Please try again later.</p>`);
+    });
+</script>
