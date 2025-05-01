@@ -1,14 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  content: ['./src/**/*.{astro,html,js,jsx,ts,tsx}', './public/**/*.html'],
   theme: {
     extend: {
       colors: {
-        background: '#fbf3e4', // used in body
-        surface: '#ffffff', // used in main content box
-        text: '#1f2937', // general text
-        primary: '#0f766e', // action color
-        secondary: '#6b7280' // subtext
+        background: '#fbf3e4',
+        surface: '#ffffff',
+        text: '#1f2937',
+        primary: '#0f766e',
+        secondary: '#6b7280'
       }
     }
-  }
+  },
+  plugins: []
 };
