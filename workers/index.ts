@@ -26,9 +26,7 @@ export default {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE, {
-      headers: { 'X-Client-Info': 'viabees-worker' }
-    });
+    const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE);
 
     // 🧩 Claim token route: /api/claim/:token
     if (pathname.startsWith('/api/claim/')) {
@@ -109,8 +107,12 @@ export default {
           }
         }
       );
+      type CampaignRow = {
+        business_id: string;
+        recipient_offer_text: string;
+      };
 
-      const campaign = (await campaignRes.json())[0];
+      const campaign = ((await campaignRes.json()) as CampaignRow[])[0];
       if (!campaign) {
         return new Response('Invalid campaign', { status: 404 });
       }
