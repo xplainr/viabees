@@ -4,6 +4,7 @@ export interface Env {
   CLAIM_KV: KVNamespace;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE: string;
+  SHARE_HMAC_SECRET: string;
 }
 
 export default {
