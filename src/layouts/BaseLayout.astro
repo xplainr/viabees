@@ -3,17 +3,17 @@ import '../styles/global.css';
 const { title = 'ViaBees' } = Astro.props;
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang="en" class="min-h-screen bg-background text-text">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-
-    {Astro.renderHead?.()}
+    <slot name="head" />
   </head>
-
-  <body class="min-h-screen bg-background text-text">
-    <h1>LAYOUT RENDERED</h1>
-    <slot />
+  <body class="min-h-screen font-sans antialiased">
+    <main class="flex flex-col min-h-screen">
+      <slot />
+    </main>
   </body>
 </html>

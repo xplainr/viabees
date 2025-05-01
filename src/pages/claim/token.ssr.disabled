@@ -1,5 +1,4 @@
 ---
-export const prerender = false;
 const { token } = Astro.params;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 // import ClaimStatus from '../../components/ClaimStatus.astro';

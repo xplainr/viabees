@@ -1,9 +1,10 @@
-import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  adapter: cloudflare(),
-  output: 'server',
+  output: 'static',  // key for Cloudflare Pages
+  integrations: [tailwind(), sitemap()],
   vite: {
     resolve: {
       alias: {

@@ -1,7 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-export const prerender = false;
 ---
+
+<Fragment slot="head">
+  <meta
+    name="description"
+    content="ViaBees enables instant, privacy-first coupon redemption via NFC or QR. No tracking. Just tap and save."
+  />
+</Fragment>
 
 <BaseLayout title="ViaBees | Instant Tap Redemption">
   <main class="p-8 text-center bg-surface text-text">
@@ -11,10 +17,14 @@ export const prerender = false;
       class="mx-auto mb-6 max-w-xs"
       width="200"
       height="200"
+      decoding="async"
+      loading="lazy"
     />
 
     <h1 class="text-3xl font-bold text-primary mb-4">Tap. Share. Redeem.</h1>
-    <p class="text-secondary text-lg max-w-md mx-auto mb-6">ViaBees lets merchants share offers.</p>
+    <p class="text-secondary text-lg max-w-md mx-auto mb-6">
+      ViaBees lets merchants share instant offers—no app, no signup, just one tap.
+    </p>
 
     <div class="flex justify-center gap-4">
       <a
