@@ -1,0 +1,11 @@
+# Normalize all text files to LF on checkout
+* text=auto eol=lf
+
+# Prevent line-ending diffs on schema dumps
+*.sql text eol=lf
+
+# Never auto-merge lockfile or compiled artifacts
+package-lock.json merge=ours
+
+# Treat Supabase config as text
+supabase/config.toml text
