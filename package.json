@@ -13,6 +13,7 @@
     "astro": "^5.7.10"
   },
   "devDependencies": {
+    "@astrojs/cloudflare": "^12.5.2",
     "@cloudflare/workers-types": "^4.20250430.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
