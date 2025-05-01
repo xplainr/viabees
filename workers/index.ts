@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/postgrest-js';
+import { createClient } from '@supabase/supabase-js';
 
 export interface Env {
   CLAIM_KV: KVNamespace;
@@ -7,25 +7,38 @@ export interface Env {
   SHARE_HMAC_SECRET: string;
 }
 
+type TokenMetadata = {
+  redeemed: boolean;
+  ttl?: number;
+  campaign_id: string;
+  business_id: string;
+  sharer_id?: string;
+  campaign: string;
+};
+
+type ShareRequest = {
+  sharer_id: string;
+  campaign_id: string;
+};
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    // ✅ Supabase Client: always create inside the fetch scope
     const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE, {
       headers: { 'X-Client-Info': 'viabees-worker' }
     });
 
     // 🧩 Claim token route: /api/claim/:token
     if (pathname.startsWith('/api/claim/')) {
-      const token = pathname.split('/').pop();
+      const token = pathname.split('/').pop() ?? '';
 
       if (!token || token.length !== 22) {
         return new Response('Invalid token format', { status: 400 });
       }
 
-      const metadata = await env.CLAIM_KV.get(token, { type: 'json' });
+      const metadata = await env.CLAIM_KV.get<TokenMetadata>(token, { type: 'json' });
 
       if (!metadata) {
         return new Response('Token not found or expired', { status: 404 });
@@ -34,13 +47,8 @@ export default {
       const { redeemed, ttl } = metadata;
       const now = Date.now();
 
-      if (redeemed) {
-        return new Response('Token already redeemed', { status: 409 });
-      }
-
-      if (ttl && now > ttl) {
-        return new Response('Token expired', { status: 410 });
-      }
+      if (redeemed) return new Response('Token already redeemed', { status: 409 });
+      if (ttl && now > ttl) return new Response('Token expired', { status: 410 });
 
       await env.CLAIM_KV.put(token, JSON.stringify({ ...metadata, redeemed: true }));
 
@@ -68,15 +76,14 @@ export default {
       });
     }
 
-    // 🔐 [Placeholder] API route to issue tokens (WIP)
+    // 🔐 Token generation route: /api/share
     if (pathname === '/api/share' && request.method === 'POST') {
-      const { sharer_id, campaign_id } = await request.json();
+      const { sharer_id, campaign_id } = (await request.json()) as ShareRequest;
 
       if (!sharer_id || !campaign_id) {
         return new Response('Missing sharer_id or campaign_id', { status: 400 });
       }
 
-      // Generate deterministic HMAC token
       const encoder = new TextEncoder();
       const key = await crypto.subtle.importKey(
         'raw',
@@ -91,9 +98,8 @@ export default {
       const hashArray = Array.from(new Uint8Array(signature));
       const claim_token = btoa(String.fromCharCode(...hashArray))
         .replace(/[^A-Za-z0-9]/g, '')
-        .slice(0, 22); // 22-char compact token
+        .slice(0, 22);
 
-      // Query Supabase to get campaign + business info
       const campaignRes = await fetch(
         `${env.SUPABASE_URL}/rest/v1/campaign?id=eq.${campaign_id}&select=business_id,recipient_offer_text`,
         {
@@ -109,7 +115,6 @@ export default {
         return new Response('Invalid campaign', { status: 404 });
       }
 
-      // KV write
       await env.CLAIM_KV.put(
         claim_token,
         JSON.stringify({
@@ -121,7 +126,6 @@ export default {
         })
       );
 
-      // Upsert sharer_campaign for attribution
       await fetch(`${env.SUPABASE_URL}/rest/v1/sharer_campaign`, {
         method: 'POST',
         headers: {
