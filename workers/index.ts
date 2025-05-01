@@ -116,6 +116,23 @@ return new Response(JSON.stringify({ status: "valid", campaign: metadata.campaig
         redeemed: false,
         campaign: campaign.recipient_offer_text
       }));
+      
+      // Upsert sharer_campaign for attribution
+await fetch(`${env.SUPABASE_URL}/rest/v1/sharer_campaign`, {
+  method: "POST",
+  headers: {
+    apikey: env.SUPABASE_SERVICE_ROLE,
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE}`,
+    "Content-Type": "application/json",
+    Prefer: "resolution=merge-duplicates"
+  },
+  body: JSON.stringify({
+    sharer_id,
+    campaign_id,
+    shares_count: 1
+  })
+});
+
 
       return new Response(JSON.stringify({
         claim_token,
