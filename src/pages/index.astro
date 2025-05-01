@@ -1,16 +1,25 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="ViaBees | Instant Tap Redemption">
   <main class="p-8 text-center">
+    <img
+      src="/viabees-logo.png"
+      alt="ViaBees Logo"
+      class="mx-auto mb-6 max-w-xs"
+      width="200"
+      height="200"
+    />
+
     <h1 class="text-3xl font-bold mb-4">Tap. Share. Redeem.</h1>
-    <p class="text-gray-700 text-lg max-w-md mx-auto mb-6">
-      ViaBees lets merchants share offers via NFC or QR—no app, no signups, just instant redemption.
-    </p>
+    <p class="text-gray-700 text-lg max-w-md mx-auto mb-6">ViaBees lets merchants share offers.</p>
 
     <div class="flex justify-center gap-4">
-      <a href="/claim/demo1234567890abcDEF" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+      <a
+        href="/claim/demo1234567890abcDEF"
+        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+      >
         Try a Demo Coupon
       </a>
     </div>

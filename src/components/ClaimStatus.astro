@@ -5,7 +5,7 @@ const { token } = Astro.props;
 <div id="claim-status" class="text-gray-600">Verifying token...</div>
 
 <script type="module">
-  const el = document.getElementById("claim-status");
+  const el = document.getElementById('claim-status');
 
   const render = (html) => {
     if (el) el.innerHTML = html;
@@ -15,16 +15,18 @@ const { token } = Astro.props;
     .then((res) => res.json())
     .then((data) => {
       switch (data.status) {
-        case "valid":
-          render(`<p class="text-green-600 font-semibold">🎉 Coupon valid for campaign: ${data.campaign}</p>`);
+        case 'valid':
+          render(
+            `<p class="text-green-600 font-semibold">🎉 Coupon valid for campaign: ${data.campaign}</p>`
+          );
           break;
-        case "expired":
+        case 'expired':
           render(`<p class="text-yellow-600">⏰ This coupon has expired.</p>`);
           break;
-        case "redeemed":
+        case 'redeemed':
           render(`<p class="text-red-600">❌ This coupon has already been redeemed.</p>`);
           break;
-        case "invalid":
+        case 'invalid':
           render(`<p class="text-gray-600">Invalid coupon token.</p>`);
           break;
         default:
