@@ -13,6 +13,7 @@
     "astro": "^5.7.10"
   },
   "devDependencies": {
+    "@iconify/tools": "^4.1.2",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
     "autoprefixer": "^10.4.21",
