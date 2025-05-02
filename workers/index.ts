@@ -74,6 +74,19 @@ export default {
       });
     }
 
+    // base62urlencode definition
+    const base62chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    function base62urlEncode(bytes: Uint8Array): string {
+      let bigint = BigInt('0x' + [...bytes].map((b) => b.toString(16).padStart(2, '0')).join(''));
+      const base = BigInt(base62chars.length);
+      let output = '';
+      while (bigint > 0) {
+        output = base62chars[Number(bigint % base)] + output;
+        bigint = bigint / base;
+      }
+      return output.padStart(22, '0'); // ensure fixed length just in case
+    }
+
     // 🔐 Token generation route: /api/share
     if (pathname === '/api/share' && request.method === 'POST') {
       const { sharer_id, campaign_id } = (await request.json()) as ShareRequest;
@@ -85,7 +98,7 @@ export default {
       const encoder = new TextEncoder();
       const key = await crypto.subtle.importKey(
         'raw',
-        encoder.encode(env.SHARE_HMAC_SECRET),
+        Uint8Array.from(atob(env.SHARE_HMAC_SECRET), (c) => c.charCodeAt(0)),
         { name: 'HMAC', hash: 'SHA-256' },
         false,
         ['sign']
@@ -93,10 +106,8 @@ export default {
 
       const data = encoder.encode(`${sharer_id}:${campaign_id}`);
       const signature = await crypto.subtle.sign('HMAC', key, data);
-      const hashArray = Array.from(new Uint8Array(signature));
-      const claim_token = btoa(String.fromCharCode(...hashArray))
-        .replace(/[^A-Za-z0-9]/g, '')
-        .slice(0, 22);
+      const base62 = base62urlEncode(new Uint8Array(signature));
+      const claim_token = base62.slice(0, 22);
 
       const campaignRes = await fetch(
         `${env.SUPABASE_URL}/rest/v1/campaign?id=eq.${campaign_id}&select=business_id,recipient_offer_text`,
