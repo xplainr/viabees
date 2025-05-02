@@ -1,0 +1,31 @@
+name = "viabees-worker"
+main = "workers/index.ts" # worker entry point
+workers_dev = true
+compatibility_date = "2025-04-30"
+compatibility_flags = ["nodejs_compat"]
+
+[env.dev]
+name = "viabees-worker-dev"
+
+[dev]
+port = 8787
+
+[[env.dev.kv_namespaces]]
+binding = "CLAIM_KV"
+id = "99daa089c393430a840c637edb6331f9"
+
+
+
+[env.stage]
+name = "viabees-worker-stage"
+
+[[env.stage.kv_namespaces]]
+binding = "CLAIM_KV"
+id = "99daa089c393430a840c637edb6331f9"
+
+[env.prod]
+name = "viabees-worker-prod"
+
+[[env.prod.kv_namespaces]]
+binding = "CLAIM_KV"
+id = "5521b448026c43f2b839f287a29391af"
